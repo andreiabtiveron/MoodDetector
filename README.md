@@ -2,6 +2,8 @@
 Roda o melhortreino.py, depois o predicao.py
 
 ## 📁 Estrutura do Projeto
+
+```text
 FER2013-Emotion-Recognition/
 │
 ├── fer2013/              ← dataset (train/test)
