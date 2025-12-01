@@ -6,7 +6,7 @@ Roda o melhortreino.py, depois o predicao.py
 ```text
 FER2013-Emotion-Recognition/
 │
-├── fer2013/              ← dataset (train/test)
+├── fer2013/              ← dataset precisa ser baixado (segue instruções abaixo)
 │   ├── train/
 │   └── test/
 │
