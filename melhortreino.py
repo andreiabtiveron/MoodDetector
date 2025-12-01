@@ -10,36 +10,39 @@ import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 
-
+#bloco convolucional para reduzir dimensionalidade e dropout
+def conv_block(filters):
+    return [
+        layers.Conv2D(filters, (3,3), padding="same", activation="relu", kernel_initializer="he_normal"),
+        layers.BatchNormalization(),
+        layers.Conv2D(filters, (3,3), padding="same", activation="relu", kernel_initializer="he_normal"),
+        layers.BatchNormalization(),
+        layers.MaxPooling2D((2,2)),
+        layers.Dropout(0.25)
+    ]
+#construir a arquitetura da cnn
 def build_model():
 
     model = models.Sequential([
-
         layers.Input(shape=(48, 48, 1)),
 
-        # bloco 1
-        layers.Conv2D(64, (3,3), activation='relu', padding='same'),
-        layers.Conv2D(64, (3,3), activation='relu', padding='same'),
-        layers.MaxPooling2D((2,2)),
-        layers.Dropout(0.25),
+        *conv_block(64),
+        *conv_block(128),
 
-        # bloco 2
-        layers.Conv2D(128, (3,3), activation='relu', padding='same'),
-        layers.Conv2D(128, (3,3), activation='relu', padding='same'),
+        layers.Conv2D(256, (3,3), padding="same", activation="relu", kernel_initializer="he_normal"),
+        layers.BatchNormalization(),
+        layers.Conv2D(256, (3,3), padding="same", activation="relu", kernel_initializer="he_normal"),
+        layers.BatchNormalization(),
         layers.MaxPooling2D((2,2)),
-        layers.Dropout(0.25),
-
-        # blc 3
-        layers.Conv2D(256, (3,3), activation='relu', padding='same'),
-        layers.MaxPooling2D((2,2)),
-        layers.Dropout(0.25),
+        layers.Dropout(0.30),
 
         layers.Flatten(),
 
-        layers.Dense(256, activation='relu'),
+        layers.Dense(256, activation="relu", kernel_initializer="he_normal"),
+        layers.BatchNormalization(),
         layers.Dropout(0.5),
 
-        layers.Dense(7, activation='softmax')
+        layers.Dense(7, activation="softmax")
     ])
 
     model.compile(
@@ -48,9 +51,8 @@ def build_model():
         metrics=["accuracy"]
     )
 
-    print(model.summary())
+    model.summary()
     return model
-
 
 # treinamentoooooooo
 def train_model():
@@ -69,9 +71,9 @@ def train_model():
 
     # callbacks
     callbacks = [
-        EarlyStopping(monitor='val_loss', patience=8, restore_best_weights=True),
+        EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True),
         ModelCheckpoint('best_model.h5', monitor='val_loss', save_best_only=True),
-        ReduceLROnPlateau(monitor='val_loss', factor=0.3, patience=3)
+        ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=2, min_lr=1e-7)
     ]
 
     # Cria modelo
@@ -82,7 +84,7 @@ def train_model():
     history = model.fit(
         train_gen,
         validation_data=test_gen,
-        epochs=30,
+        epochs=60,#adicionei mais epocas 
         class_weight=class_weights,
         callbacks=callbacks
     )
