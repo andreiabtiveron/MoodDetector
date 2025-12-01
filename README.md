@@ -2,11 +2,11 @@
 Roda o melhortreino.py, depois o predicao.py
 
 ## 📁 Estrutura do Projeto
-MoodDetector
+FER2013-Emotion-Recognition/
 │
-├── fer2013/ ← dataset (tem q baixar)
-│ ├── train/
-│ └── test/
+├── fer2013/              ← dataset (train/test)
+│   ├── train/
+│   └── test/
 │
 ├── preprocesso.py
 ├── treino.py
