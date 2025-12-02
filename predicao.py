@@ -1,8 +1,12 @@
 import numpy as np
+import os
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
 
 EMOTIONS = ["angry", "disgust", "fear", "happy", "sad", "surprise", "neutral"]
+
+# Diretório de saída (compatível com Docker e execução local)
+OUTPUT_DIR = os.getenv("OUTPUT_DIR", "outputs")
 
 
 def predict_image(img_path):
@@ -15,7 +19,9 @@ def predict_image(img_path):
     img = np.array(img).reshape(1, 48, 48, 1) / 255.0
 
     # carrega modelo
-    model = load_model("emotion_cnn.h5")
+    model_path = os.path.join(OUTPUT_DIR, "emotion_cnn_melhor.h5")
+    print(f"Carregando modelo: {model_path}")
+    model = load_model(model_path)
 
     #prediz  
     pred = model.predict(img)
