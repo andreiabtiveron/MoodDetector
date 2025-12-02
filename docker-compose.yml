@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  train:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILDKIT_INLINE_CACHE: 1
+    image: mooddetector:latest
+    container_name: mooddetector-train
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '2'
+          memory: 4G
+    
+    volumes:
+      - ./fer2013:/app/fer2013:ro
+      - ./outputs:/app/outputs:rw
+      - ./melhortreino.py:/app/melhortreino.py:ro
+    
+    environment:
+      - TF_CPP_MIN_LOG_LEVEL=2
+      - TF_ENABLE_ONEDNN_OPTS=1
+      - PYTHONUNBUFFERED=1
+    
+    command: python melhortreino.py
+    
+
+  predict:
+    image: mooddetector:latest
+    container_name: mooddetector-predict
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+    
+    volumes:
+      - ./outputs:/app/outputs:ro
+      - ./foto_teste.png:/app/foto_teste.png:ro
+      - ./predicao.py:/app/predicao.py:ro
+    
+    environment:
+      - TF_CPP_MIN_LOG_LEVEL=2
+      - PYTHONUNBUFFERED=1
+    
+    command: python predicao.py
+    
+    profiles:
+      - predict
+
+volumes:
+  pip-cache:
+    driver: local
