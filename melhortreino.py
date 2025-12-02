@@ -4,11 +4,16 @@ from preprocesso import load_datasets
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import os
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.utils.class_weight import compute_class_weight
 import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+
+# Diretório de saída (compatível com Docker e execução local)
+OUTPUT_DIR = os.getenv("OUTPUT_DIR", "outputs")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 #bloco convolucional para reduzir dimensionalidade e dropout
 def conv_block(filters):
@@ -72,7 +77,7 @@ def train_model():
     # callbacks
     callbacks = [
         EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True),
-        ModelCheckpoint('best_model.h5', monitor='val_loss', save_best_only=True),
+        ModelCheckpoint(os.path.join(OUTPUT_DIR, 'best_model.h5'), monitor='val_loss', save_best_only=True),
         ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=2, min_lr=1e-7)
     ]
 
@@ -110,7 +115,7 @@ def train_model():
     plt.title("Loss")
     plt.legend()
 
-    plt.savefig("training_curves.png")
+    plt.savefig(os.path.join(OUTPUT_DIR, "training_curves.png"))
     plt.close()
 
     
@@ -126,15 +131,15 @@ def train_model():
     plt.xlabel("Predito")
     plt.ylabel("Real")
     plt.title("Matriz de Confusão")
-    plt.savefig("confusion_matrix.png")
+    plt.savefig(os.path.join(OUTPUT_DIR, "confusion_matrix.png"))
     plt.close()
 
     print("\nRelatório de Classificação:\n")
     print(classification_report(y_true, y_pred))
 
     # alva modelo
-    print("Salvando modelo final em 'emotion_cnn_melhor.h5'")
-    model.save("emotion_cnn_melhor.h5")
+    print(f"Salvando modelo final em '{OUTPUT_DIR}/emotion_cnn_melhor.h5'")
+    model.save(os.path.join(OUTPUT_DIR, "emotion_cnn_melhor.h5"))
 
     print("\nTreinamento concluído\n")
 
