@@ -1,12 +1,3 @@
-FROM tensorflow/tensorflow:2.15.0 AS builder
-
-WORKDIR /app
-
-COPY requirements.txt .
-
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
-
 FROM tensorflow/tensorflow:2.15.0
 
 LABEL maintainer="MoodDetector Team"
@@ -14,7 +5,10 @@ LABEL description="CNN para detecção de emoções faciais - FER2013"
 
 WORKDIR /app
 
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY requirements.txt .
+
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 COPY preprocesso.py .
 COPY melhortreino.py .

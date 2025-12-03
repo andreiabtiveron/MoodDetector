@@ -52,4 +52,3 @@ def load_datasets(
     print("Classes detectadas:", train_generator.class_indices)
     return train_generator, test_generator
 
-o
