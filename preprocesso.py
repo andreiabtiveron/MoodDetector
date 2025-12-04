@@ -14,15 +14,16 @@ def load_datasets(
     train_dir = f"{base_path}/train"
     test_dir = f"{base_path}/test"
 
-    # data augmentation
+    # data augmentation (mais agressivo para melhor generalização)
     train_datagen = ImageDataGenerator(
         rescale=1./255,
-        rotation_range=10,
-        width_shift_range=0.2,
-        height_shift_range=0.2,
+        rotation_range=20,          # aumentado de 10 para 20
+        width_shift_range=0.25,     # aumentado de 0.2 para 0.25
+        height_shift_range=0.25,    # aumentado de 0.2 para 0.25
         shear_range=0.2,
-        zoom_range=0.2,
+        zoom_range=0.25,            # aumentado de 0.2 para 0.25
         horizontal_flip=True,
+        brightness_range=[0.8, 1.2], # novo: variação de brilho
         fill_mode='nearest'
     )
 
