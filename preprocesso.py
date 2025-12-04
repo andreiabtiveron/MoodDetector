@@ -1,6 +1,6 @@
 # carrega as pastas fer2013/train e fer2013/test usando ImageDataGenerator
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
+ 
 
 def load_datasets(
     base_path="fer2013",
